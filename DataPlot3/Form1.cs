@@ -11,15 +11,13 @@ using System.IO;
 using System.IO.Ports;
 using ZedGraph;
 
-namespace DataPlot3
-{
-    public partial class Form1 : Form
-    {
+namespace DataPlot3 {
+    public partial class Form1 : Form {
         bool bDataSentToBot = false;
-        bool bSpeedSent = false;
-        bool bKpSent = false;
-        bool bKiSent = false;
-        bool bKdSent = false;
+        bool bSpeedReceived = false;
+        bool bKpReceived = false;
+        bool bKiReceived = false;
+        bool bKdReceived = false;
         String COMRx;
         int NoOfCurves, Samples;
         int[,] colourList = {{128,0,0},{0,128,0},{0,0,128},{0,128,128},{128,128,0},{255,0,0},{0,255,0},
@@ -36,11 +34,9 @@ namespace DataPlot3
             InitializeComponent();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
+        private void Form1_Load(object sender, EventArgs e) {
             // Set the titles and axis labels
             ZedGraphControl1.GraphPane.Title.Text = "";
-            //ZedGraphControl1.GraphPane.Title.IsVisible = false;
             ZedGraphControl1.GraphPane.XAxis.Title.Text = "";
             ZedGraphControl1.GraphPane.YAxis.Title.Text = "";
             ZedGraphControl1.GraphPane.XAxis.Scale.MaxGrace = 0;
@@ -56,16 +52,15 @@ namespace DataPlot3
             NoOfDataNumericUpDown.Value = Properties.Settings.Default.DataSetsSetting;
             XTextBox.Text = Properties.Settings.Default.XScaleSetting;
             YTextBox.Text = Properties.Settings.Default.YScaleSetting;
+            SeriesLineSizeNumericUpDown.Value = Properties.Settings.Default.LineSizeSetting;
 
             // Fill COMPortComboBox with available COM ports
-            string[] saPorts = SerialPort.GetPortNames();
+            string[] aosPorts = SerialPort.GetPortNames();
             bool foundCOMPortFlag = false;
-            COMPortComboBox.DataSource = saPorts;
-            foreach (string port in saPorts)
-            {
-                if (port == Properties.Settings.Default.COMPortSetting)
-                {
-                    COMPortComboBox.Text = Properties.Settings.Default.COMPortSetting;
+            COMPortComboBox.DataSource = aosPorts;
+            foreach (string port in aosPorts) {
+                if (port == Properties.Settings.Default.COMPortSetting) {
+                    COMPortComboBox.Text = port;
                     foundCOMPortFlag = true;
                 }
             }
@@ -76,8 +71,7 @@ namespace DataPlot3
             }
         }
 
-        private void COMConnectBtn_Click(object sender, EventArgs e)
-        {
+        private void COMConnectBtn_Click(object sender, EventArgs e) {
             COMConnectButton.Enabled = false;
 
             COMPortStatusLight.Value = 3;
@@ -85,8 +79,7 @@ namespace DataPlot3
             ZedGraphControl1.GraphPane.YAxis.Scale.Max = Convert.ToDouble(YTextBox.Text);
             ZedGraphControl1.GraphPane.YAxis.Scale.Min = -Convert.ToDouble(YTextBox.Text);
 
-            if (SerialPort.IsOpen)//connection is already open, close it
-            {
+            if (SerialPort.IsOpen) {//connection is already open, close it
                 timer1.Enabled = false;
 
                 SerialPort.Close();
@@ -123,18 +116,14 @@ namespace DataPlot3
             COMConnectButton.Enabled = true;
         }
 
-        private void initCurves()
-        {
+        private void initCurves() {
             Samples = int.Parse(XTextBox.Text);
             NoOfCurves = (int)NoOfDataNumericUpDown.Value;
 
-
-            for (int j = 0; j < NoOfCurves; j++)
-            {
+            for (int j = 0; j < NoOfCurves; j++) {
                 PointPairList tempppl = new PointPairList();
 
-                for (double x = 0; x < Samples; x++)
-                {
+                for (double x = 0; x < Samples; x++) {
                     tempppl.Add(x, 0);
                 }
 
@@ -145,48 +134,40 @@ namespace DataPlot3
             }
         }
 
-        private void deleteCurves()
-        {
+        private void deleteCurves() {
             ZedGraphControl1.GraphPane.CurveList.Clear();
         }
 
         // event handler for getting serial data
-        private void ProcessCOMRx(object sender, EventArgs e)
-        {
-            if (!string.IsNullOrEmpty(COMRx))
-            {
+        private void ProcessCOMRx(object sender, EventArgs e) {
+            if (!string.IsNullOrEmpty(COMRx)) {
                 // handel incoming info from bot
-                if (COMRx.Contains("#"))
-                {
+                if (COMRx.Contains("#")) {
                     //Console.WriteLine("COMRx:" + COMRx);
                     var vDataValue = COMRx.Substring(2, COMRx.IndexOf("#")-2);
                     //Console.WriteLine("vDataValue:" + vDataValue);
 
-                    if (COMRx.StartsWith("kp"))
-                    {
+                    if (COMRx.StartsWith("kp")) {
                         // Check off that speed was sent
-                        bKpSent = true;
+                        bKpReceived = true;
                         Console.WriteLine("got back kp");
                     }
 
-                    if (COMRx.StartsWith("ki"))
-                    {
+                    if (COMRx.StartsWith("ki")) {
                         // Check off that speed was sent
-                        bKiSent = true;
+                        bKiReceived = true;
                         Console.WriteLine("got back ki");
                     }
 
-                    if (COMRx.StartsWith("kd"))
-                    {
+                    if (COMRx.StartsWith("kd")) {
                         // Check off that speed was sent
-                        bKdSent = true;
+                        bKdReceived = true;
                         Console.WriteLine("got back kd");
                     }
 
-                    if (COMRx.StartsWith("sp"))
-                    {
+                    if (COMRx.StartsWith("sp")) {
                         // Check off that speed was sent
-                        bSpeedSent = true;
+                        bSpeedReceived = true;
                         Console.WriteLine("got back sp");
                     }
                     return;
@@ -196,32 +177,24 @@ namespace DataPlot3
                 string[] parsed = COMRx.Split(',');
                 int curveNo;
 
-                if (parsed.Count() > ZedGraphControl1.GraphPane.CurveList.Count())
-                {
+                if (parsed.Count() > ZedGraphControl1.GraphPane.CurveList.Count()) {
                     // data count is more than stated - good
                     curveNo = ZedGraphControl1.GraphPane.CurveList.Count();
-                }
-                else
-                {
+                } else {
                     // data count is not more than stated - bad
                     curveNo = parsed.Count();
                 }
 
-                for (int k = 0; k < curveNo; k++)
-                {
-                    for (int j = ZedGraphControl1.GraphPane.CurveList[k].NPts - 1; j > 0; j--)
-                    {
+                for (int k = 0; k < curveNo; k++) {
+                    for (int j = ZedGraphControl1.GraphPane.CurveList[k].NPts - 1; j > 0; j--) {
                         ZedGraphControl1.GraphPane.CurveList[k].Points[j].Y = ZedGraphControl1.GraphPane.CurveList[k].Points[j - 1].Y;
                     }
 
                     double temp = 0;
 
-                    try
-                    {
+                    try {
                         temp = double.Parse(parsed[k]);
-                    }
-                    catch
-                    {
+                    } catch {
                         RawTextBox.AppendText("Parse Error\n");
                     }
 
@@ -234,31 +207,28 @@ namespace DataPlot3
                 COMRx = "";
             }
 
-            if (bDataSentToBot == true)
-            {
-                if (!bSpeedSent) {
+            if (bDataSentToBot == true) {
+                if (!bSpeedReceived) {
                     SerialPort.WriteLine("sp" + SpeedNumericUpDown.Value + "#");
                     Console.WriteLine("resent sp");
                 }
 
-                if (!bKpSent) { 
+                if (!bKpReceived) { 
                     SerialPort.WriteLine("kp" + PTermNumericUpDown.Value + "#");
                     Console.WriteLine("resent kp");
                 }
 
-                if (!bKiSent) {
+                if (!bKiReceived) {
                     SerialPort.WriteLine("ki" + ITermNumericUpDown.Value + "#");
                     Console.WriteLine("resent ki");
                 }
 
-                if (!bKdSent) {
+                if (!bKdReceived) {
                     SerialPort.WriteLine("kd" + DTermNumericUpDown.Value + "#");
                     Console.WriteLine("resent kd");
                 }
 
-
-                if (bSpeedSent && bKiSent && bKdSent && bKpSent)
-                {
+                if (bSpeedReceived && bKiReceived && bKdReceived && bKpReceived) {
                     // Everything came back so reset the flags
                     bDataSentToBot = false;
                     Console.WriteLine("got back all and reset bDataSentToBot flag");
@@ -267,20 +237,16 @@ namespace DataPlot3
             }
         }
 
-        private void ReadLineError(object sender, EventArgs e)
-        {
+        private void ReadLineError(object sender, EventArgs e) {
             RawTextBox.AppendText("Read Line Error\n");
         }
 
-        private void SerialPort_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
-        {
+        private void SerialPort_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e) {
             int BufferLength = SerialPort.BytesToRead;
             //StringBuilder tempS = new StringBuilder();
 
-            while (BufferLength > 0 && SerialPort.IsOpen)
-            {
-                try
-                {
+            while (BufferLength > 0 && SerialPort.IsOpen) {
+                try {
                     //tempS.Append(MAASerialPort.ReadLine());
                     COMRx = SerialPort.ReadLine();
                     //Console.Write("COMRx:");
@@ -292,22 +258,18 @@ namespace DataPlot3
 
                     if (SerialPort.IsOpen)
                         BufferLength = SerialPort.BytesToRead;
-                }
-                catch
-                {
+                } catch {
                     this.BeginInvoke(new EventHandler(ReadLineError));
                 }
             }
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
-        {
+        private void timer1_Tick(object sender, EventArgs e) {
             ZedGraphControl1.AxisChange();
             ZedGraphControl1.Invalidate();
         }
 
-        private void COMSendButton_Click(object sender, EventArgs e)
-        {
+        private void COMSendButton_Click(object sender, EventArgs e) {
             COMPortSendStatusLight.Value = -1;
 
             //SerialPort.WriteLine("sp" + SpeedNumericUpDown.Value + "#");
@@ -322,18 +284,17 @@ namespace DataPlot3
             
             // set send/receive flags 
             bDataSentToBot = true;
-            bSpeedSent = false;
-            bKpSent = false;
-            bKiSent = false;
-            bKdSent = false; 
+            bSpeedReceived = false;
+            bKpReceived = false;
+            bKiReceived = false;
+            bKdReceived = false; 
             
             Console.WriteLine("Sent");
 
             //label2.Text = PTermNumericUpDown.Value.ToString();
         }
 
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e) {
             // save settings to default value storage
             Properties.Settings.Default.COMPortSetting = COMPortComboBox.Text;
             Properties.Settings.Default.PTermSetting = PTermNumericUpDown.Value;
@@ -343,9 +304,9 @@ namespace DataPlot3
             Properties.Settings.Default.DataSetsSetting = NoOfDataNumericUpDown.Value;
             Properties.Settings.Default.XScaleSetting = XTextBox.Text;
             Properties.Settings.Default.YScaleSetting = YTextBox.Text;
-
+            Properties.Settings.Default.LineSizeSetting = SeriesLineSizeNumericUpDown.Value;
+            
             Properties.Settings.Default.Save();
         }
-
     }
 }
