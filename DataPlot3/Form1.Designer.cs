@@ -159,15 +159,16 @@
             // 
             // RawTextBox
             // 
-            this.RawTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.RawTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.RawTextBox.Location = new System.Drawing.Point(9, 519);
+            this.RawTextBox.Location = new System.Drawing.Point(9, 326);
             this.RawTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.RawTextBox.MaxLength = 1000;
             this.RawTextBox.Multiline = true;
             this.RawTextBox.Name = "RawTextBox";
             this.RawTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.RawTextBox.Size = new System.Drawing.Size(718, 131);
+            this.RawTextBox.Size = new System.Drawing.Size(185, 210);
             this.RawTextBox.TabIndex = 1;
             // 
             // ZedGraphControl1
@@ -187,7 +188,7 @@
             this.ZedGraphControl1.ScrollMinX = 0D;
             this.ZedGraphControl1.ScrollMinY = 0D;
             this.ZedGraphControl1.ScrollMinY2 = 0D;
-            this.ZedGraphControl1.Size = new System.Drawing.Size(718, 503);
+            this.ZedGraphControl1.Size = new System.Drawing.Size(718, 638);
             this.ZedGraphControl1.TabIndex = 2;
             // 
             // OptionsGroupBox
@@ -197,6 +198,7 @@
             this.OptionsGroupBox.BackColor = System.Drawing.SystemColors.Control;
             this.OptionsGroupBox.Controls.Add(this.label5);
             this.OptionsGroupBox.Controls.Add(this.YTextBox);
+            this.OptionsGroupBox.Controls.Add(this.RawTextBox);
             this.OptionsGroupBox.Controls.Add(this.label4);
             this.OptionsGroupBox.Controls.Add(this.SeriesLineSizeNumericUpDown);
             this.OptionsGroupBox.Controls.Add(this.COMPortSendStatusLight);
@@ -279,7 +281,7 @@
             this.COMPortSendStatusLight.BackgroundImage = System.Drawing.Color.Empty;
             this.COMPortSendStatusLight.BackgroundImageLayout = System.Drawing.Color.Empty;
             this.COMPortSendStatusLight.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.COMPortSendStatusLight.Location = new System.Drawing.Point(8, 306);
+            this.COMPortSendStatusLight.Location = new System.Drawing.Point(8, 291);
             this.COMPortSendStatusLight.Margin = new System.Windows.Forms.Padding(2);
             this.COMPortSendStatusLight.Name = "COMPortSendStatusLight";
             this.COMPortSendStatusLight.OffColor = System.Drawing.Color.Red;
@@ -451,7 +453,7 @@
             this.COMSendButton.CausesValidation = false;
             this.COMSendButton.Enabled = false;
             this.COMSendButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.COMSendButton.Location = new System.Drawing.Point(49, 306);
+            this.COMSendButton.Location = new System.Drawing.Point(49, 291);
             this.COMSendButton.Name = "COMSendButton";
             this.COMSendButton.Size = new System.Drawing.Size(75, 30);
             this.COMSendButton.TabIndex = 6;
@@ -526,12 +528,11 @@
             this.ClientSize = new System.Drawing.Size(940, 659);
             this.Controls.Add(this.OptionsGroupBox);
             this.Controls.Add(this.ZedGraphControl1);
-            this.Controls.Add(this.RawTextBox);
             this.Controls.Add(this.ComPortGroupBox);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
-            this.Text = "DataPlot V3";
+            this.Text = "Serial-Data-Plotter-PID-Tuning-Thing 1.0";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ComPortGroupBox.ResumeLayout(false);

@@ -39,13 +39,14 @@ namespace DataPlot3
         private void Form1_Load(object sender, EventArgs e)
         {
             // Set the titles and axis labels
-            ZedGraphControl1.GraphPane.Title.Text = "Time History";
-            ZedGraphControl1.GraphPane.XAxis.Title.Text = "Samples";
+            ZedGraphControl1.GraphPane.Title.Text = "";
+            //ZedGraphControl1.GraphPane.Title.IsVisible = false;
+            ZedGraphControl1.GraphPane.XAxis.Title.Text = "";
             ZedGraphControl1.GraphPane.YAxis.Title.Text = "";
             ZedGraphControl1.GraphPane.XAxis.Scale.MaxGrace = 0;
             ZedGraphControl1.GraphPane.YAxis.MajorGrid.IsVisible = true;
             ZedGraphControl1.GraphPane.XAxis.MajorGrid.IsVisible = true;
-            ZedGraphControl1.GraphPane.Legend.Position = ZedGraph.LegendPos.Right;
+            ZedGraphControl1.GraphPane.Legend.Position = ZedGraph.LegendPos.Top;
 
             // Set defaults for UI
             PTermNumericUpDown.Value = Properties.Settings.Default.PTermSetting;
